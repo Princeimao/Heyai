@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@import "@fontsource/anonymous-pro";
+@import "@fontsource/anonymous-pro/400.css";
+@import "@fontsource/anonymous-pro/400-italic.css";
+
+/* @theme {
+  --color-primary: #2b2c33;
+  --color-gradient: linear-gradient(
+    110.71deg,
+    #f76a4b 15.87%,
+    #a24ae7 60.65%,
+    #4859f3 89.14%
+  );
+  --color-white: rgba(255, 255, 255);
+  --color-white-86: rgba(255, 255, 255, 0.86);
+  --color-white-64: rgba(255, 255, 255, 0.64);
+  --color-white-48: rgba(255, 255, 255, 0.48);
+  --color-white-32: rgba(255, 255, 255, 0.32);
+  --color-white-06: rgba(255, 255, 255, 0.06);
+  --color-grey: #515151;
+}
+
+@layer {
+  .anonymous-pro-regular {
+    font-family: "Anonymous Pro", monospace;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .anonymous-pro-bold {
+    font-family: "Anonymous Pro", monospace;
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  .anonymous-pro-regular-italic {
+    font-family: "Anonymous Pro", monospace;
+    font-weight: 400;
+    font-style: italic;
+  }
+
+  .anonymous-pro-bold-italic {
+    font-family: "Anonymous Pro", monospace;
+    font-weight: 700;
+    font-style: italic;
+  }
+} */
+
+body {
+  font-family: "Anonymous Pro", sans-serif;
+}
