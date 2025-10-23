@@ -1,4 +1,4 @@
-@import "tailwindcss";
+/* @import "tailwindcss"; */
 
 @import "@fontsource/anonymous-pro";
 @import "@fontsource/anonymous-pro/400.css";
@@ -48,5 +48,7 @@
 } */
 
 body {
+  margin: 0;
+  padding: 0;
   font-family: "Anonymous Pro", sans-serif;
 }
