@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { app } from "./app";
 
 if (process.env.NODE_ENV === "DEVELOPMENT") {
-  dotenv.config({ path: ".env.development" });
+  dotenv.config({ path: ".env" });
 } else {
   dotenv.config({ path: ".env.production" });
 }
