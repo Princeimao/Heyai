@@ -15,14 +15,16 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  email        String         @unique
-  name         String?
-  profileImage String?
-  Birthdate    DateTime?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  providers    AuthProvider[]
+  id              String         @id @default(uuid())
+  email           String         @unique
+  name            String?
+  profileImage    String?
+  birthdate       DateTime?
+  status          status
+  isEmailVerified Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  providers       AuthProvider[]
 }
 
 model AuthProvider {
@@ -43,4 +45,10 @@ enum ProviderType {
   google
   github
   apple
+}
+
+enum status {
+  draft
+  active
+  inactive
 }
