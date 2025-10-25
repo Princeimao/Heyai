@@ -137,16 +137,19 @@ const Login = () => {
                 },
                 "& .MuiInputLabel-root": {
                   color: "white",
+                  "&.Mui-focused": {
+                    color: "white",
+                  },
                 },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
                     borderColor: "#ffffff52",
                   },
                   "&:hover fieldset": {
-                    borderColor: "#ffffff52",
+                    borderColor: "#ffffff80",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "#ffffff52",
+                    borderColor: "#ffffffcc",
                   },
                 },
               }}

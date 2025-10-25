@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import AuthLayout from "./layout/AuthLayout";
 import HomeLayout from "./layout/HomeLayout";
 import Ask from "./pages/Ask";
+import CreatePass from "./pages/CreatePass";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 
@@ -16,6 +17,7 @@ function App() {
 
         <Route element={<AuthLayout />}>
           <Route path="auth/login" element={<Login />} />
+          <Route path="auth/create-password" element={<CreatePass />} />
         </Route>
       </Routes>
     </Router>
