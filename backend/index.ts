@@ -1,11 +1,5 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import { app } from "./app";
-
-if (process.env.NODE_ENV === "DEVELOPMENT") {
-  dotenv.config({ path: ".env" });
-} else {
-  dotenv.config({ path: ".env.production" });
-}
 
 const port = process.env.PORT;
 function server() {

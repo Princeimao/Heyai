@@ -1,9 +1,18 @@
 import express from "express";
-import { login } from "../controller/auth.controller";
+import {
+  googleLogin,
+  login,
+  loginCreatePass,
+  otpVerify,
+  userDetails,
+} from "../controller/auth.controller";
 
 const router = express.Router();
 
 router.route("/login").post(login);
-router.route("/callback");
+router.route("/callback").post(googleLogin);
+router.route("/login/create-password").post(loginCreatePass);
+router.route("/login/verify-otp").post(otpVerify);
+router.route("/login/user-details").post(userDetails);
 
 export default router;

@@ -20,7 +20,7 @@ export const loginPasswordValidation = z.object({
 
 export const otpValidation = z.object({
   email: z.email(),
-  userOtp: z.number().min(6).max(6).nonnegative(),
+  userOtp: z.string().min(6).max(6),
 });
 
 export const userDetailValidation = z.object({

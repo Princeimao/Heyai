@@ -34,7 +34,9 @@ export const login = async (req: Request, res: Response) => {
     );
 
     if (!user) {
-      res.redirect(`${process.env.FRONTEND_URL}/auth/password`);
+      res.status(200).json({
+        redirect_url: `/auth/create-password`,
+      });
     } else {
       if (googleProvider) {
         const state = arctic.generateState();
@@ -58,7 +60,7 @@ export const login = async (req: Request, res: Response) => {
 
         return res.redirect(url.toString());
       } else {
-        res.redirect(`${process.env.FRONTEND_URL}/auth/create-password`);
+        res.redirect(`/auth/password`);
       }
     }
   } catch (error) {
@@ -120,7 +122,7 @@ export const googleLogin = async (req: Request, res: Response) => {
   }
 };
 
-export const login_createPass = async (req: Request, res: Response) => {
+export const loginCreatePass = async (req: Request, res: Response) => {
   try {
     const { email, password } = loginPasswordValidation.parse(req.body);
 
@@ -142,10 +144,10 @@ export const login_createPass = async (req: Request, res: Response) => {
 
     const otp = generateOtp();
     optMap.set(email, otp);
-    if (process.env.NODE_ENV === "DEVELOPMENT") {
-      console.log(otp);
+    if (process.env.NODE_ENV === "PRODUCTION") {
+      // send otp in email
     }
-    // send otp in email
+    console.log(otp);
 
     res.status(200).json({
       success: true,
@@ -169,13 +171,13 @@ export const login_createPass = async (req: Request, res: Response) => {
   }
 };
 
-export const otp_verify = async (req: Request, res: Response) => {
+export const otpVerify = async (req: Request, res: Response) => {
   try {
     const { email, userOtp } = otpValidation.parse(req.body);
 
     const otp = optMap.get(email);
 
-    if (otp !== userOtp) {
+    if (otp !== Number(userOtp)) {
       res.status(400).json({
         success: false,
         message: "Invalid otp",
@@ -240,6 +242,19 @@ export const userDetails = async (req: Request, res: Response) => {
 
     const accessToken = generateAccessToken(user.name, user.id, user.email);
     const refreshToken = generateRefreshToken(user.id);
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "user logged in successfully",
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       console.log("zod Error");
