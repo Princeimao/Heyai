@@ -7,11 +7,15 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import googleImg from "../../public/google.svg";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const emailValidation = z.object({
     email: z.email(),
   });
@@ -27,8 +31,22 @@ const Login = () => {
     },
   });
 
-  const handleForm = (data: z.infer<typeof emailValidation>) => {
-    console.log(data);
+  const handleForm = async (data: z.infer<typeof emailValidation>) => {
+    try {
+      const response = await axios.post(`http://localhost:3000/v1/auth/login`, {
+        email: data.email,
+      });
+
+      if (response.data.status !== 200) {
+        throw new Error("something went wrong");
+      }
+
+      sessionStorage.setItem("tempEmail", data.email);
+
+      navigate(response.data.redirect_url);
+    } catch (error) {
+      console.log("something went wrong", error);
+    }
   };
 
   return (

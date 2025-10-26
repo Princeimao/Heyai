@@ -5,6 +5,7 @@ import Ask from "./pages/Ask";
 import CreatePass from "./pages/CreatePass";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import OtpVerification from "./pages/OtpVerification";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route element={<AuthLayout />}>
           <Route path="auth/login" element={<Login />} />
           <Route path="auth/create-password" element={<CreatePass />} />
+          <Route path="auth/verify-otp" element={<OtpVerification />} />
         </Route>
       </Routes>
     </Router>

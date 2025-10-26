@@ -1,19 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import axios from "axios";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-const CreatePass = () => {
+const OtpVerification = () => {
   const navigate = useNavigate();
 
   const passwordValidation = z.object({
     email: z.email(),
-    password: z
-      .string()
-      .min(8, { message: "Password atleast 8 character long" }),
+    otp: z.string().min(6, { message: "Enter Your 6 digit OTP" }).max(6),
   });
 
   const {
@@ -25,17 +30,17 @@ const CreatePass = () => {
     resolver: zodResolver(passwordValidation),
     defaultValues: {
       email: "",
-      password: "",
+      otp: "",
     },
   });
 
   const handleForm = async (data: z.infer<typeof passwordValidation>) => {
     try {
       const response = await axios.post(
-        `http://localhost:3000/v1/auth/login/create-password`,
+        `http://localhost:3000/v1/auth/login/verify-otp`,
         {
           email: data.email,
-          password: data.password,
+          userOtp: data.otp,
         }
       );
 
@@ -43,7 +48,7 @@ const CreatePass = () => {
         throw new Error("something went wrong");
       }
 
-      navigate("/auth/verify-otp");
+      navigate("/auth/user-details");
     } catch (error) {
       console.log("something went wrong", error);
     }
@@ -64,6 +69,7 @@ const CreatePass = () => {
         color: "white",
       }}
     >
+      <Toolbar />
       <Box
         sx={{
           display: "flex",
@@ -80,7 +86,7 @@ const CreatePass = () => {
             mb: "5px",
           }}
         >
-          Create your account
+          Enter OTP
         </Typography>
 
         <Typography
@@ -91,7 +97,7 @@ const CreatePass = () => {
             color: "text.white_32",
           }}
         >
-          Set your password for Heyai to continue
+          One Time Password (OTP) has been sent via Email
         </Typography>
 
         <form
@@ -100,7 +106,7 @@ const CreatePass = () => {
             display: "flex",
             flexDirection: "column",
             gap: "15px",
-            width: "25rem",
+            width: "30vw",
             marginTop: "2vh",
           }}
         >
@@ -108,39 +114,22 @@ const CreatePass = () => {
             label="Email"
             variant="outlined"
             fullWidth
-            disabled
             type="email"
             {...register("email")}
             error={!!errors.email}
             helperText={errors.email?.message}
             sx={{
               "& .MuiInputBase-root": {
-                color: "#ffffffd9", // base text color
+                color: "#ffffffd9",
                 borderRadius: "999px",
                 backgroundColor: "#ffffff0f",
-
-                "&.Mui-disabled": {
-                  backgroundColor: "#ffffff0a", // slightly transparent background when disabled
-                },
               },
-
-              "& .MuiInputBase-input": {
-                color: "#ffffffd9", // text color for normal state
-                "&.Mui-disabled": {
-                  WebkitTextFillColor: "white",
-                },
-              },
-
               "& .MuiInputLabel-root": {
                 color: "white",
                 "&.Mui-focused": {
                   color: "white",
                 },
-                "&.Mui-disabled": {
-                  color: "white",
-                },
               },
-
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
                   borderColor: "#ffffff52",
@@ -151,21 +140,26 @@ const CreatePass = () => {
                 "&.Mui-focused fieldset": {
                   borderColor: "#ffffffcc",
                 },
-                "&.Mui-disabled fieldset": {
-                  borderColor: "#ffffff40",
-                },
               },
             }}
           />
 
           <TextField
-            label="password"
+            label="Otp"
             variant="outlined"
             fullWidth
-            type="password"
-            {...register("password")}
-            error={!!errors.password}
-            helperText={errors.password?.message}
+            type="otp"
+            {...register("otp", {
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                const regexValue = value.replace(/\D/g, "");
+                const splitedVal = regexValue.slice(0, 6);
+                setValue("otp", splitedVal);
+              },
+              required: "Username is required",
+            })}
+            error={!!errors.otp}
+            helperText={errors.otp?.message}
             sx={{
               "& .MuiInputBase-root": {
                 color: "#ffffffd9",
@@ -223,4 +217,4 @@ const CreatePass = () => {
   );
 };
 
-export default CreatePass;
+export default OtpVerification;
