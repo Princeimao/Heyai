@@ -26,5 +26,5 @@ export const otpValidation = z.object({
 export const userDetailValidation = z.object({
   email: z.email(),
   name: z.string().min(2, { message: "Name atleast 2 character long" }).max(50),
-  birthdate: z.date(),
+  birthdate: z.date().optional(),
 });

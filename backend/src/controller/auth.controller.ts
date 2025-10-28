@@ -227,7 +227,7 @@ export const userDetails = async (req: Request, res: Response) => {
       },
       data: {
         name: name,
-        birthdate: birthdate,
+        birthdate: birthdate === undefined ? null : birthdate,
         status: "active",
       },
     });
@@ -254,6 +254,12 @@ export const userDetails = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "user logged in successfully",
+      user: {
+        name: user.name,
+        profilePicture: user.profileImage,
+        email: user.email,
+        id: user.id,
+      },
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -264,7 +270,7 @@ export const userDetails = async (req: Request, res: Response) => {
         error: error,
       });
     }
-    console.log("something went wrong while updating user");
+    console.log("something went wrong while updating user", error);
     res.status(500).json({
       success: false,
       message: "something went wrong while while updating user",
