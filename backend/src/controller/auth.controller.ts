@@ -1,5 +1,6 @@
 import * as arctic from "arctic";
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { ZodError } from "zod";
 import { google } from "../config/google.client";
 import { prisma } from "../config/prisma.client";
@@ -274,6 +275,113 @@ export const userDetails = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "something went wrong while while updating user",
+    });
+  }
+};
+
+export const user = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      throw new Error("something weng wrong while: User route");
+    }
+
+    const existedUser = await prisma.user.findFirst({
+      where: {
+        id: user.id,
+      },
+    });
+
+    if (!existedUser) {
+      res.status(500).json({
+        success: false,
+        message: "Internal server error - user not found",
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "User get successfully",
+      user: {
+        name: existedUser.name,
+        profilePicture: existedUser.profileImage,
+        email: existedUser.email,
+        id: existedUser.id,
+      },
+    });
+  } catch (error) {
+    console.log("something went wrong while getting user", error);
+    res.status(500).json({
+      success: false,
+      message: "something went wrong while getting user",
+    });
+  }
+};
+
+export const refreshAccessToken = async (req: Request, res: Response) => {
+  try {
+    const refreshToken = req.cookies["refreshToken"];
+
+    if (!refreshToken) {
+      res.status(400).json({
+        success: false,
+        message: "Unauthorized request: Refresh Token is not defined",
+      });
+      return;
+    }
+
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT Secret is not defined");
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET) as {
+      id: string;
+      jti: string;
+    };
+
+    if (!decoded) {
+      throw new Error("Something went wrong");
+    }
+
+    const verifyToken = await prisma.user.findFirst({
+      where: {
+        id: decoded.id,
+      },
+    });
+
+    if (refreshToken !== verifyToken?.refreshToken) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid Token: Token not matched",
+      });
+      return;
+    }
+
+    if (!verifyToken?.name) {
+      throw new Error("Internal server Error");
+    }
+
+    const accessToken = generateAccessToken(
+      verifyToken?.name,
+      verifyToken?.id,
+      verifyToken?.email
+    );
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Access token refreshed successfully",
+    });
+  } catch (error) {
+    console.log("something went wrong while refreshing access token", error);
+    res.status(500).json({
+      success: false,
+      message: "something went wrong while refreshing access token",
     });
   }
 };
