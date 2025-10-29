@@ -20,11 +20,12 @@ model User {
   name            String?
   profileImage    String?
   birthdate       DateTime?
-  status          status
+  status          Status
   isEmailVerified Boolean        @default(false)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   refreshToken    String?
+  execution       Execution[]
   providers       AuthProvider[]
 }
 
@@ -48,8 +49,45 @@ enum ProviderType {
   apple
 }
 
-enum status {
+enum Status {
   draft
   active
   inactive
+}
+
+model Execution {
+  id         String        @id @default(uuid())
+  type       ExecutionType
+  user       User          @relation(fields: [userId], references: [id])
+  userId     String
+  externalId String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+enum ExecutionType {
+  conversation
+}
+
+model Conversation {
+  id        String    @id @default(uuid())
+  title     String
+  message   Message[]
+  createtAt DateTime  @default(now())
+  updateAt  DateTime  @updatedAt
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  role           Role
+  content        String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String
+  createtAt      DateTime     @default(now())
+  updateAt       DateTime     @updatedAt
+}
+
+enum Role {
+  user
+  assistant
 }
