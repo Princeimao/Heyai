@@ -81,7 +81,7 @@ model Message {
   id             String       @id @default(uuid())
   role           Role
   content        String
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   conversationId String
   createtAt      DateTime     @default(now())
   updateAt       DateTime     @updatedAt
