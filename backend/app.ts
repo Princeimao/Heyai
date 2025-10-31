@@ -16,5 +16,8 @@ app.use(
 app.use(cookerParser());
 
 // API ROUTES
-import authRoutes from "./src/router/auth.route";
-app.use("/v1/auth", authRoutes);
+import authRoute from "./src/router/auth.router";
+import aiRoute from "./src/router/chat.router";
+
+app.use("/v1/auth", authRoute);
+app.use("/v1/ai", aiRoute);

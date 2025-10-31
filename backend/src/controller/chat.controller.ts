@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
+import { getResponse } from "../agents/chat.agent";
 import { prisma } from "../config/prisma.client";
+import { contentValidation } from "../validation/chat.validation";
 
 export const getConversation = async (req: Request, res: Response) => {
   try {
@@ -35,7 +37,7 @@ export const getConversation = async (req: Request, res: Response) => {
       message: "Conversation message get successfully",
       conversation: {
         message: conversation?.message,
-        title: conversation?.title,
+        title: execution.title,
       },
     });
   } catch (error) {
@@ -88,6 +90,35 @@ export const deleteConversation = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "something went wrong while getting conversation",
+    });
+  }
+};
+
+export const createConversation = async (req: Request, res: Response) => {
+  try {
+    const { content } = contentValidation.parse(req.body);
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(400).json({
+        success: false,
+        message: "Unauthorized Request",
+      });
+      return;
+    }
+
+    const response = await getResponse(content, userId);
+
+    res.status(200).json({
+      success: true,
+      message: "Created Conversation",
+      AiResponse: response,
+    });
+  } catch (error) {
+    console.log("something went wrong while creating conversation", error);
+    res.status(500).json({
+      success: false,
+      message: "something went wrong while creating conversation",
     });
   }
 };

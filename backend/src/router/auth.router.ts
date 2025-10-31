@@ -8,6 +8,7 @@ import {
   user,
   userDetails,
 } from "../controller/auth.controller";
+import { authMiddleware } from "./../middleware/auth.middleware";
 
 const router = express.Router();
 
@@ -18,6 +19,6 @@ router.route("/login/verify-otp").post(otpVerify);
 router.route("/login/user-details").post(userDetails);
 router.route("/refresh").post(refreshAccessToken);
 
-router.route("/me").get(user);
+router.route("/me").get(authMiddleware, user);
 
 export default router;

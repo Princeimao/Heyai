@@ -2,17 +2,18 @@ import * as arctic from "arctic";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { ZodError } from "zod";
-import { google } from "../config/google.client";
+import { google } from "../config/googleAuth.client";
 import { prisma } from "../config/prisma.client";
 import { generateOtp } from "../helper/generateOtp";
 import { generateAccessToken, generateRefreshToken } from "../helper/jwt";
 import {
+  emailValidation,
   loginPasswordValidation,
+  otpValidation,
   paramsValidation,
   userDetailValidation,
-} from "../validation";
+} from "../validation/auth.validation";
 import { hashPassword } from "./../helper/bcrypt";
-import { emailValidation, otpValidation } from "./../validation/index";
 
 // Change the otpMap from in memory to redis
 const optMap = new Map<string, number>();
