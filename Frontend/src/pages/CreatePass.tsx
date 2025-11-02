@@ -39,7 +39,7 @@ const CreatePass = () => {
         }
       );
 
-      if (response.data.status !== true) {
+      if (response.data.success === false) {
         throw new Error("something went wrong");
       }
 

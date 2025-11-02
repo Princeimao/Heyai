@@ -20,9 +20,10 @@ import {
   type CSSObject,
   type Theme,
 } from "@mui/material/styles";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Chat from "../../public/chat.svg";
 import Main from "../../public/main.svg";
+import type { User } from "../types";
 
 const drawerWidth = 240;
 
@@ -34,6 +35,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
   }),
   overflowX: "hidden",
 });
+
 const closedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
@@ -94,6 +96,14 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerClose }) => {
   const theme = useTheme();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const getUser = sessionStorage.getItem("session");
+    if (getUser) {
+      setUser(JSON.parse(getUser));
+    }
+  }, []);
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -186,13 +196,17 @@ const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerClose }) => {
       <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: "10px" }}>
         <Avatar
           alt="Remy Sharp"
-          src=""
+          src={user?.profilePicture !== null ? user?.profilePicture : ""}
           sx={{
             height: "30px",
             width: "30px",
           }}
         />
-        {open && <Typography variant="body2">Remy Sharp</Typography>}
+        {open && (
+          <Typography variant="body2">
+            {user === null ? "Guest" : user.name}
+          </Typography>
+        )}
       </Box>
     </Drawer>
   );

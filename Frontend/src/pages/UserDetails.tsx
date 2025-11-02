@@ -1,53 +1,67 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Box,
-  Button,
-  Container,
-  Divider,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import googleImg from "../../public/google.svg";
 
-const Login = () => {
+const UserDetails = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState<string>("");
 
-  const emailValidation = z.object({
-    email: z.email(),
+  const passwordValidation = z.object({
+    name: z
+      .string()
+      .min(2, { message: "Name atleast 2 character long" })
+      .max(55),
   });
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
-  } = useForm<z.infer<typeof emailValidation>>({
-    resolver: zodResolver(emailValidation),
+  } = useForm<z.infer<typeof passwordValidation>>({
+    resolver: zodResolver(passwordValidation),
     defaultValues: {
-      email: "",
+      name: "",
     },
   });
 
-  const handleForm = async (data: z.infer<typeof emailValidation>) => {
+  const handleForm = async (data: z.infer<typeof passwordValidation>) => {
     try {
-      const response = await axios.post(`http://localhost:3000/v1/auth/login`, {
-        email: data.email,
-      });
+      const response = await axios.post(
+        `http://localhost:3000/v1/auth/login/user-details`,
+        { email: email, name: data.name }
+      );
 
       if (response.data.success === false) {
         throw new Error("something went wrong");
       }
 
-      sessionStorage.setItem("tempEmail", data.email);
+      const session = {
+        name: response.data.user.name,
+        profilePicture: response.data.user.profilePicture,
+        email: response.data.user.email,
+        id: response.data.user.id,
+      };
 
-      navigate(response.data.redirect_url);
+      sessionStorage.setItem("session", JSON.stringify(session));
+
+      navigate("/");
     } catch (error) {
       console.log("something went wrong", error);
     }
   };
+
+  useEffect(() => {
+    const email = sessionStorage.getItem("tempEmail");
+
+    if (email) {
+      setEmail(email);
+    }
+  }, [setValue]);
 
   return (
     <Container
@@ -72,10 +86,10 @@ const Login = () => {
             mb: "5px",
           }}
         >
-          Log in or sign up
+          Personal Details
         </Typography>
 
-        <Typography
+        {/* <Typography
           variant="body2"
           sx={{
             textAlign: "center",
@@ -85,7 +99,7 @@ const Login = () => {
         >
           You’ll get smarter responses and can upload files, <br /> images, and
           more.
-        </Typography>
+        </Typography> */}
 
         <Box
           sx={{
@@ -95,58 +109,23 @@ const Login = () => {
             gap: "10px",
           }}
         >
-          <Button
-            sx={{
-              bgcolor: "text.white_06",
-              border: 1,
-              borderColor: "text.white_32",
-              borderRadius: "999px",
-              color: "white",
-              px: "5vw",
-              py: "10px",
-              ":hover": {
-                bgcolor: "text.white_32",
-              },
-            }}
-          >
-            <img src={googleImg} alt="google Logo" />
-            <Typography
-              sx={{
-                fontWeight: "600",
-                letterSpacing: "1px",
-              }}
-            >
-              Continue with Google
-            </Typography>
-          </Button>
-
-          <Divider
-            sx={{
-              "&::before, &::after": {
-                borderColor: "text.white_32",
-              },
-              color: "white",
-            }}
-          >
-            or
-          </Divider>
-
           <form
             onSubmit={handleSubmit(handleForm)}
             style={{
               display: "flex",
               flexDirection: "column",
               gap: "10px",
+              width: "25rem",
             }}
           >
             <TextField
-              label="Email"
+              label="Name"
               variant="outlined"
               fullWidth
-              type="email"
-              {...register("email")}
-              error={!!errors.email}
-              helperText={errors.email?.message}
+              type="text"
+              {...register("name")}
+              error={!!errors.name}
+              helperText={errors.name?.message}
               sx={{
                 "& .MuiInputBase-root": {
                   color: "#ffffffd9",
@@ -172,6 +151,7 @@ const Login = () => {
                 },
               }}
             />
+
             <Button
               sx={{
                 bgcolor: "white",
@@ -204,4 +184,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default UserDetails;

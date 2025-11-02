@@ -44,7 +44,7 @@ const OtpVerification = () => {
         }
       );
 
-      if (response.data.status !== true) {
+      if (response.data.success === false) {
         throw new Error("something went wrong");
       }
 
@@ -106,7 +106,7 @@ const OtpVerification = () => {
             display: "flex",
             flexDirection: "column",
             gap: "15px",
-            width: "30vw",
+            width: "25rem",
             marginTop: "2vh",
           }}
         >
