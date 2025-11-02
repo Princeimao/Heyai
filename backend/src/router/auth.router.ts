@@ -4,6 +4,7 @@ import {
   login,
   loginCreatePass,
   otpVerify,
+  passwordLogin,
   refreshAccessToken,
   user,
   userDetails,
@@ -18,7 +19,7 @@ router.route("/login/create-password").post(loginCreatePass);
 router.route("/login/verify-otp").post(otpVerify);
 router.route("/login/user-details").post(userDetails);
 router.route("/refresh").post(refreshAccessToken);
-
+router.route("/login/password-login").post(passwordLogin);
 router.route("/me").get(authMiddleware, user);
 
 export default router;

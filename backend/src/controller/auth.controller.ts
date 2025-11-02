@@ -13,7 +13,7 @@ import {
   paramsValidation,
   userDetailValidation,
 } from "../validation/auth.validation";
-import { hashPassword } from "./../helper/bcrypt";
+import { comparePassword, hashPassword } from "./../helper/bcrypt";
 
 // Change the otpMap from in memory to redis
 const optMap = new Map<string, number>();
@@ -232,6 +232,9 @@ export const userDetails = async (req: Request, res: Response) => {
         birthdate: birthdate === undefined ? null : birthdate,
         status: "active",
       },
+      include: {
+        providers: true,
+      },
     });
 
     if (!user || !user.name) {
@@ -244,6 +247,15 @@ export const userDetails = async (req: Request, res: Response) => {
 
     const accessToken = generateAccessToken(user.name, user.id, user.email);
     const refreshToken = generateRefreshToken(user.id);
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        refreshToken: refreshToken,
+      },
+    });
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
@@ -383,6 +395,64 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       message: "something went wrong while refreshing access token",
+    });
+  }
+};
+
+export const passwordLogin = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = loginPasswordValidation.parse(req.body);
+
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        email: email,
+      },
+      include: {
+        providers: true,
+      },
+    });
+
+    if (!existingUser) {
+      res.status(400).json({
+        success: false,
+        message: "User not found, Invalid credientials",
+      });
+      return;
+    }
+
+    const emailProvider = existingUser.providers.find(
+      (e) => e.providerName === "email"
+    );
+
+    if (!emailProvider?.passwordHash) {
+      throw new Error("something went wrong");
+    }
+
+    const passwordValidate = await comparePassword(
+      password,
+      emailProvider?.passwordHash
+    );
+
+    if (!passwordValidate) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid Credintials",
+      });
+      return;
+    }
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid user credientials",
+        error: error,
+      });
+      return;
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while login user",
     });
   }
 };

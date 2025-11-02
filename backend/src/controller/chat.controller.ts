@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ZodError } from "zod";
 import { getResponse } from "../agents/chat.agent";
 import { prisma } from "../config/prisma.client";
 import { contentValidation } from "../validation/chat.validation";
@@ -115,10 +116,58 @@ export const createConversation = async (req: Request, res: Response) => {
       AiResponse: response,
     });
   } catch (error) {
+    if (error instanceof ZodError) {
+      console.log("zod Error");
+      res.status(400).json({
+        success: false,
+        message: "zod Error",
+        error: error,
+      });
+    }
+
     console.log("something went wrong while creating conversation", error);
     res.status(500).json({
       success: false,
       message: "something went wrong while creating conversation",
+    });
+  }
+};
+
+export const continueConversation = async (req: Request, res: Response) => {
+  try {
+    const { executionId } = req.params;
+    const { content } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(400).json({
+        success: false,
+        message: "Unauthorized Request",
+      });
+      return;
+    }
+
+    const response = await getResponse(content, userId, executionId);
+
+    res.status(200).json({
+      success: true,
+      message: "Created conversation successfully",
+      response: response,
+    });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.log("zod Error");
+      res.status(400).json({
+        success: false,
+        message: "zod Error",
+        error: error,
+      });
+    }
+
+    console.log("something went wrong while creating message", error);
+    res.status(500).json({
+      success: false,
+      message: "something went wrong while creating message",
     });
   }
 };

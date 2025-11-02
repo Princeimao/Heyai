@@ -1,4 +1,5 @@
 import { createAgent } from "langchain";
+import { systemPrompt } from "../../systemPrompt";
 import { gemini } from "../config/gemini.config";
 import { prisma } from "../config/prisma.client";
 import { getWeather } from "./tools";
@@ -6,8 +7,10 @@ import { getWeather } from "./tools";
 const chatAgent = createAgent({
   model: gemini,
   tools: [getWeather],
+  systemPrompt: systemPrompt,
 });
 
+// Todo: Optimise the database query by reducing the number of quries
 export const getResponse = async (
   content: string,
   userId: string,
@@ -15,8 +18,69 @@ export const getResponse = async (
 ) => {
   try {
     if (executionId) {
-      // do something
-      return "hi something";
+      const execution = await prisma.execution.findFirst({
+        where: {
+          id: executionId,
+          userId: userId,
+        },
+      });
+
+      if (!execution) {
+        return {
+          success: false,
+          message: "Execution not found",
+        };
+      }
+
+      const conversation = await prisma.conversation.findFirst({
+        where: {
+          id: execution?.externalId,
+        },
+        include: {
+          message: {
+            select: {
+              role: true,
+              content: true,
+            },
+          },
+        },
+      });
+
+      if (!conversation) {
+        throw new Error("Content not found");
+      }
+
+      const response = await chatAgent.invoke({
+        messages: [
+          ...conversation.message,
+          {
+            role: "user",
+            content: content,
+          },
+        ],
+      });
+
+      if (!response) {
+        throw new Error("something went wrong");
+      }
+
+      const contentResponse =
+        response.messages[response.messages.length - 1].content;
+
+      await prisma.message.createMany({
+        data: [
+          { role: "user", content: content, conversationId: conversation.id },
+          {
+            role: "assistant",
+            content: contentResponse as string,
+            conversationId: conversation.id,
+          },
+        ],
+      });
+
+      return {
+        response: response.messages[response.messages.length - 1].content,
+      };
     }
 
     const response = await chatAgent.invoke({

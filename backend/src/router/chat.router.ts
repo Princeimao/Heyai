@@ -1,8 +1,16 @@
 import express from "express";
-import { createConversation } from "../controller/chat.controller";
+import {
+  continueConversation,
+  createConversation,
+  deleteConversation,
+  getConversation,
+} from "../controller/chat.controller";
 
 const router = express.Router();
 
-router.route("/chat").post(createConversation);
+router.route("/create/conversation").post(createConversation);
+router.route("/conversation/:executionId").post(continueConversation);
+router.route("/get/conversation/:executionId").get(getConversation);
+router.route("/delete/conversation/:executionId").delete(deleteConversation);
 
 export default router;
