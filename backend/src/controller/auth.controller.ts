@@ -62,7 +62,9 @@ export const login = async (req: Request, res: Response) => {
 
         return res.redirect(url.toString());
       } else {
-        res.redirect(`/auth/password`);
+        res.status(200).json({
+          redirect_url: `/auth/password`,
+        });
       }
     }
   } catch (error) {
@@ -304,6 +306,9 @@ export const user = async (req: Request, res: Response) => {
       where: {
         id: user.id,
       },
+      include: {
+        execution: true,
+      },
     });
 
     if (!existedUser) {
@@ -318,10 +323,11 @@ export const user = async (req: Request, res: Response) => {
       success: true,
       message: "User get successfully",
       user: {
-        name: existedUser.name,
-        profilePicture: existedUser.profileImage,
-        email: existedUser.email,
         id: existedUser.id,
+        name: existedUser.name,
+        email: existedUser.email,
+        profilePicture: existedUser.profileImage,
+        execution: existedUser.execution,
       },
     });
   } catch (error) {
@@ -412,7 +418,7 @@ export const passwordLogin = async (req: Request, res: Response) => {
       },
     });
 
-    if (!existingUser) {
+    if (!existingUser || !existingUser.name) {
       res.status(400).json({
         success: false,
         message: "User not found, Invalid credientials",
@@ -440,6 +446,37 @@ export const passwordLogin = async (req: Request, res: Response) => {
       });
       return;
     }
+
+    const accessToken = generateAccessToken(
+      existingUser.name,
+      existingUser.id,
+      existingUser.email
+    );
+    const refreshToken = generateRefreshToken(existingUser.id);
+
+    await prisma.user.update({
+      where: {
+        id: existingUser.id,
+      },
+      data: {
+        refreshToken: refreshToken,
+      },
+    });
+
+    res.cookie("accessToken", accessToken);
+
+    res.cookie("refreshToken", refreshToken);
+
+    res.status(200).json({
+      success: true,
+      message: "user logged in successfully",
+      user: {
+        name: existingUser.name,
+        profilePicture: existingUser.profileImage,
+        email: existingUser.email,
+        id: existingUser.id,
+      },
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       res.status(400).json({

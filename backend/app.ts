@@ -4,16 +4,17 @@ import express from "express";
 
 export const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: `${process.env.FRONTEND_URL}`,
+    origin: "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(cookerParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // API ROUTES
 import authRoute from "./src/router/auth.router";
