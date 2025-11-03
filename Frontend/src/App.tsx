@@ -6,6 +6,7 @@ import CreatePass from "./pages/CreatePass";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import OtpVerification from "./pages/OtpVerification";
+import PasswordLogin from "./pages/PasswordLogin";
 import UserDetails from "./pages/UserDetails";
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="auth/create-password" element={<CreatePass />} />
           <Route path="auth/verify-otp" element={<OtpVerification />} />
           <Route path="auth/user-details" element={<UserDetails />} />
+          <Route path="auth/password" element={<PasswordLogin />} />
         </Route>
       </Routes>
     </Router>

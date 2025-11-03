@@ -21,8 +21,10 @@ import {
   type Theme,
 } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Chat from "../../public/chat.svg";
 import Main from "../../public/main.svg";
+import type { Execution } from "../layout/HomeLayout";
 import type { User } from "../types";
 
 const drawerWidth = 240;
@@ -92,11 +94,17 @@ const Drawer = styled(MuiDrawer, {
 interface SidebarProps {
   open: boolean;
   handleDrawerClose: () => void;
+  execution: Execution[] | null;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  open,
+  handleDrawerClose,
+  execution,
+}) => {
   const theme = useTheme();
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getUser = sessionStorage.getItem("session");
@@ -143,7 +151,9 @@ const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerClose }) => {
           </IconButton>
         </Box>
       </DrawerHeader>
+
       <Divider />
+
       <List
         sx={{
           color: "white",
@@ -190,6 +200,49 @@ const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerClose }) => {
             </ListItemButton>
           </ListItem>
         ))}
+        {open && execution && (
+          <Typography
+            sx={{
+              ml: 3,
+              mt: 1,
+              color: "text.white_48",
+            }}
+          >
+            chats
+          </Typography>
+        )}
+
+        {execution &&
+          execution.map((conversations) => (
+            <ListItem
+              key={conversations.id}
+              disablePadding
+              sx={{ display: "block" }}
+            >
+              <ListItemButton
+                onClick={() => navigate(`/${conversations.id}`)}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                {/* <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
+                {text.icon}
+              </ListItemIcon> */}
+                <ListItemText
+                  primary={conversations.title}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
       </List>
 
       <Divider />
