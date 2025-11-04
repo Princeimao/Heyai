@@ -1,0 +1,28 @@
+name: Frontend Continuous Integration
+
+on:
+  push:
+    path:
+      - "Frontend/**"
+  pull_request:
+    path:
+      - "Frontend/**"
+
+jobs:
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the code
+        uses: action/checkout@3
+
+      - name: set up Node.js
+        uses: action/setup-node@4
+        with: 
+          node-version: 20
+      
+      - name: Install Dependencies 
+        run: npm install 
+
+      - names: Run tests
+        run: npm run build
