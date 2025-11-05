@@ -1,7 +1,23 @@
 import { Box, Container, Typography } from "@mui/material";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 
 const Home = () => {
+  const [message, setMessage] = useState<string>("");
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    if (message.trim() === "") {
+      return;
+    }
+
+    localStorage.setItem("tempMessage", message);
+
+    navigate("/ask");
+  };
+
   return (
     <Box
       sx={{
@@ -42,7 +58,13 @@ const Home = () => {
           >
             Talk freely and our AI will fit the best headphones for you
           </Typography>
-          <Input />
+
+          {/* Input Box */}
+          <Input
+            message={message}
+            setMessage={setMessage}
+            onClick={handleSubmit}
+          />
         </Box>
       </Container>
     </Box>

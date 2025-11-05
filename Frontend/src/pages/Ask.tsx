@@ -1,7 +1,7 @@
 import { Box, Container, CssBaseline, Toolbar } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ChatBubble from "../components/ChatBubble";
 import Input from "../components/Input";
 import AiResponse from "./AiResponse";
@@ -10,16 +10,15 @@ type Role = "user" | "assistant";
 
 interface Conversation {
   content: string;
-  id: string;
-  createtAt: Date;
-  updateAt: Date;
+  id?: string;
   role: Role;
-  conversationId: string;
 }
 
 const Ask = () => {
   const { chatId } = useParams();
   const [conversation, setConversation] = useState<Conversation[] | null>();
+  const navigate = useNavigate();
+  const [prompt, setPrompt] = useState<string>("");
 
   const getChats = async () => {
     try {
@@ -44,9 +43,101 @@ const Ask = () => {
     }
   };
 
+  const createConversation = async () => {
+    try {
+      const userPrompt = await localStorage.getItem("tempMessage");
+
+      if (!userPrompt) {
+        navigate("/");
+        return;
+      }
+
+      setConversation([
+        {
+          role: "user",
+          content: userPrompt,
+        },
+      ]);
+
+      const response = await axios.post(
+        `http://localhost:3000/v1/ai/create/conversation`,
+        {
+          content: userPrompt,
+        }
+      );
+
+      if (response.data.success === false) {
+        throw new Error("something went wrong");
+      }
+
+      localStorage.removeItem("tempMessage");
+
+      window.history.replaceState(
+        {},
+        "",
+        `/${response.data.AiResponse.execution}`
+      );
+
+      setConversation((prev) => [
+        ...(prev ?? []),
+        {
+          role: "assistant",
+          content: response.data.AiResponse.response,
+        },
+      ]);
+    } catch (error) {
+      console.log("something went wrong while creating conversation", error);
+    }
+  };
+
+  const createChat = async () => {
+    setConversation((prev) => [
+      ...prev!,
+      {
+        role: "user",
+        content: prompt,
+      },
+    ]);
+
+    try {
+      if (prompt.trim() === "") return;
+
+      if (!chatId) {
+        throw new Error("Chat id is not defined");
+      }
+
+      const response = await axios.post(
+        `http://localhost:3000/v1/ai/conversation/${chatId}`,
+        {
+          content: prompt,
+        }
+      );
+
+      setPrompt("");
+
+      if (response.data.success === false) {
+        throw new Error("something went wrong");
+      }
+
+      setConversation((prev) => [
+        ...prev!,
+        {
+          role: "assistant",
+          content: response.data.response,
+        },
+      ]);
+    } catch (error) {
+      console.log("something went wrong creating chat", error);
+    }
+  };
+
   useEffect(() => {
-    getChats();
-  }, []);
+    if (chatId === "ask") {
+      createConversation();
+    } else {
+      getChats();
+    }
+  }, [chatId]);
 
   return (
     <Box
@@ -85,7 +176,7 @@ const Ask = () => {
             alignItems: "center",
           }}
         >
-          <Input />
+          <Input message={prompt} setMessage={setPrompt} onClick={createChat} />
         </Box>
       </Container>
     </Box>
