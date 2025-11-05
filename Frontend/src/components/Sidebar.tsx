@@ -1,6 +1,5 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import SearchIcon from "@mui/icons-material/Search";
 import {
   Avatar,
   Box,
@@ -164,17 +163,18 @@ const Sidebar: React.FC<SidebarProps> = ({
           {
             label: "New Chat",
             icon: <img src={Chat} alt="" />,
+            to: "/",
           },
-          {
-            label: "Seach",
-            icon: (
-              <SearchIcon
-                sx={{
-                  color: "text.white_64",
-                }}
-              />
-            ),
-          },
+          // {
+          //   label: "Seach",
+          //   icon: (
+          //     <SearchIcon
+          //       sx={{
+          //         color: "text.white_64",
+          //       }}
+          //     />
+          //   ),
+          // },
         ].map((text, index) => (
           <ListItem key={index} disablePadding sx={{ display: "block" }}>
             <ListItemButton
@@ -183,6 +183,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
+              onClick={() => navigate(text.to)}
             >
               <ListItemIcon
                 sx={{

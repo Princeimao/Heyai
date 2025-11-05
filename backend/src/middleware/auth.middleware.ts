@@ -15,10 +15,6 @@ export const authMiddleware = async (
 ) => {
   try {
     const token = req.cookies["accessToken"];
-    console.log(req);
-
-    console.log(req.cookies);
-    console.log(req.cookies["accessToken"]);
 
     if (!token) {
       res.status(400).json({

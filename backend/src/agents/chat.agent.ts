@@ -106,7 +106,7 @@ export const getResponse = async (
 
     const execution = await prisma.execution.create({
       data: {
-        title: "sting",
+        title: content.slice(0, 10),
         type: "conversation",
         userId: userId,
         externalId: conversation.id,

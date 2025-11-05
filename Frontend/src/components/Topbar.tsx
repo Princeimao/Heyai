@@ -1,12 +1,12 @@
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, IconButton, Toolbar, Typography } from "@mui/material";
+import { Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import MuiAppBar, {
   type AppBarProps as MuiAppBarProps,
 } from "@mui/material/AppBar";
 import { styled } from "@mui/material/styles";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Main from "../../public/main.svg";
-import Side from "../../public/side.svg";
 
 const drawerWidth = 240;
 
@@ -43,6 +43,8 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ open, handleDrawerOpen }) => {
+  const navigate = useNavigate();
+
   return (
     <AppBar position="fixed" open={open} elevation={0}>
       <Toolbar>
@@ -80,7 +82,53 @@ const Topbar: React.FC<TopbarProps> = ({ open, handleDrawerOpen }) => {
             )}
           </Box>
 
-          <img src={Side} alt="" />
+          {/* <img src={Side} alt="" /> */}
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+            }}
+          >
+            <Button
+              sx={{
+                bgcolor: "white",
+                px: 3,
+                borderRadius: "999px",
+              }}
+              onClick={() => navigate("/auth/login")}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  letterSpacing: 1,
+                  textTransform: "none",
+                }}
+              >
+                Log in
+              </Typography>
+            </Button>
+
+            <Button
+              sx={{
+                bgcolor: "transparent",
+                px: 3,
+                borderRadius: "999px",
+                color: "white",
+                border: 2,
+              }}
+              onClick={() => navigate("/auth/login")}
+            >
+              <Typography
+                sx={{
+                  fontWeight: "600",
+                  letterSpacing: 1,
+                  textTransform: "none",
+                }}
+              >
+                sign up
+              </Typography>
+            </Button>
+          </Box>
         </Box>
       </Toolbar>
     </AppBar>
