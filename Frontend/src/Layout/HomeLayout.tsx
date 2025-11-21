@@ -55,7 +55,15 @@ const HomeLayout = () => {
         execution={executions}
       />
 
-      <Outlet />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          transition: "margin-left 0.3s ease",
+        }}
+      >
+        <Outlet />
+      </Box>
     </Box>
   );
 };

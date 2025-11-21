@@ -22,7 +22,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Chat from "../../public/chat.svg";
-import Main from "../../public/main.svg";
 import type { Execution } from "../layout/HomeLayout";
 import type { User } from "../types";
 
@@ -31,7 +30,7 @@ const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
   transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
+    easing: theme.transitions.easing.easeIn,
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: "hidden",
@@ -39,7 +38,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
 
 const closedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
+    easing: theme.transitions.easing.easeOut,
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: "hidden",
@@ -123,19 +122,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             width: "100%",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "8px",
-              px: "15px",
-            }}
-          >
-            <img src={Main} alt="" />
-            <Typography>Heyai</Typography>
-          </Box>
-
           <IconButton
             onClick={handleDrawerClose}
             sx={{
@@ -165,16 +151,6 @@ const Sidebar: React.FC<SidebarProps> = ({
             icon: <img src={Chat} alt="" />,
             to: "/",
           },
-          // {
-          //   label: "Seach",
-          //   icon: (
-          //     <SearchIcon
-          //       sx={{
-          //         color: "text.white_64",
-          //       }}
-          //     />
-          //   ),
-          // },
         ].map((text, index) => (
           <ListItem key={index} disablePadding sx={{ display: "block" }}>
             <ListItemButton

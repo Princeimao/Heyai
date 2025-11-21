@@ -1,3 +1,9 @@
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import MuiAppBar, {
@@ -5,7 +11,6 @@ import MuiAppBar, {
 } from "@mui/material/AppBar";
 import { styled } from "@mui/material/styles";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Main from "../../public/main.svg";
 
 const drawerWidth = 240;
@@ -43,8 +48,6 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ open, handleDrawerOpen }) => {
-  const navigate = useNavigate();
-
   return (
     <AppBar position="fixed" open={open} elevation={0}>
       <Toolbar>
@@ -74,61 +77,35 @@ const Topbar: React.FC<TopbarProps> = ({ open, handleDrawerOpen }) => {
               gap: "8px",
             }}
           >
-            {!open && (
-              <>
-                <img src={Main} alt="" />
-                <Typography>Heyai</Typography>
-              </>
-            )}
+            <img src={Main} alt="" />
+            <Typography>Heyai</Typography>
           </Box>
 
-          {/* <img src={Side} alt="" /> */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-            }}
-          >
-            <Button
-              sx={{
-                bgcolor: "white",
-                px: 3,
-                borderRadius: "999px",
-              }}
-              onClick={() => navigate("/auth/login")}
-            >
-              <Typography
+          <SignedOut>
+            <SignInButton>
+              <Button
                 sx={{
-                  fontWeight: "600",
-                  letterSpacing: 1,
-                  textTransform: "none",
+                  bgcolor: "white",
+                  px: 3,
+                  borderRadius: "999px",
                 }}
               >
-                Log in
-              </Typography>
-            </Button>
+                <Typography
+                  sx={{
+                    fontWeight: "600",
+                    letterSpacing: 1,
+                    textTransform: "none",
+                  }}
+                >
+                  Log in
+                </Typography>
+              </Button>
+            </SignInButton>
+          </SignedOut>
 
-            <Button
-              sx={{
-                bgcolor: "transparent",
-                px: 3,
-                borderRadius: "999px",
-                color: "white",
-                border: 2,
-              }}
-              onClick={() => navigate("/auth/login")}
-            >
-              <Typography
-                sx={{
-                  fontWeight: "600",
-                  letterSpacing: 1,
-                  textTransform: "none",
-                }}
-              >
-                sign up
-              </Typography>
-            </Button>
-          </Box>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </Box>
       </Toolbar>
     </AppBar>
