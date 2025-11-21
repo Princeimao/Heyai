@@ -1,9 +1,4 @@
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
+import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import MuiAppBar, {
@@ -11,6 +6,7 @@ import MuiAppBar, {
 } from "@mui/material/AppBar";
 import { styled } from "@mui/material/styles";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Main from "../../public/main.svg";
 
 const drawerWidth = 240;
@@ -48,6 +44,7 @@ interface TopbarProps {
 }
 
 const Topbar: React.FC<TopbarProps> = ({ open, handleDrawerOpen }) => {
+  const navigate = useNavigate();
   return (
     <AppBar position="fixed" open={open} elevation={0}>
       <Toolbar>
@@ -82,25 +79,24 @@ const Topbar: React.FC<TopbarProps> = ({ open, handleDrawerOpen }) => {
           </Box>
 
           <SignedOut>
-            <SignInButton>
-              <Button
+            <Button
+              sx={{
+                bgcolor: "white",
+                px: 3,
+                borderRadius: "999px",
+              }}
+              onClick={() => navigate(`/auth/login`)}
+            >
+              <Typography
                 sx={{
-                  bgcolor: "white",
-                  px: 3,
-                  borderRadius: "999px",
+                  fontWeight: "600",
+                  letterSpacing: 1,
+                  textTransform: "none",
                 }}
               >
-                <Typography
-                  sx={{
-                    fontWeight: "600",
-                    letterSpacing: 1,
-                    textTransform: "none",
-                  }}
-                >
-                  Log in
-                </Typography>
-              </Button>
-            </SignInButton>
+                Log in
+              </Typography>
+            </Button>
           </SignedOut>
 
           <SignedIn>

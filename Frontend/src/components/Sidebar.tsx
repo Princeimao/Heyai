@@ -1,7 +1,7 @@
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import SettingsSuggestOutlinedIcon from "@mui/icons-material/SettingsSuggestOutlined";
 import {
-  Avatar,
   Box,
   Divider,
   IconButton,
@@ -19,11 +19,10 @@ import {
   type CSSObject,
   type Theme,
 } from "@mui/material/styles";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import Chat from "../../public/chat.svg";
 import type { Execution } from "../layout/HomeLayout";
-import type { User } from "../types";
 
 const drawerWidth = 240;
 
@@ -101,15 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   execution,
 }) => {
   const theme = useTheme();
-  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const getUser = sessionStorage.getItem("session");
-    if (getUser) {
-      setUser(JSON.parse(getUser));
-    }
-  }, []);
 
   return (
     <Drawer variant="permanent" open={open}>
@@ -224,17 +215,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <Divider />
       <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: "10px" }}>
-        <Avatar
-          alt="Remy Sharp"
-          src={user?.profilePicture !== null ? user?.profilePicture : ""}
-          sx={{
-            height: "30px",
-            width: "30px",
-          }}
-        />
+        <SettingsSuggestOutlinedIcon />
         {open && (
           <Typography variant="body2">
-            {user === null ? "Guest" : user.name}
+            {open === null ? "Guest" : "Setting"}
           </Typography>
         )}
       </Box>

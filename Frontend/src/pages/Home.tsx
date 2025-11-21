@@ -31,9 +31,9 @@ const Home = () => {
           sx={{
             display: "flex",
             flexDirection: "column",
-            gap: "px",
+            gap: "20px",
             alignItems: "center",
-            height: "70vh",
+            height: "90vh",
             justifyContent: "center",
           }}
         >
@@ -49,14 +49,6 @@ const Home = () => {
             }}
           >
             What's in your mind.
-          </Typography>
-          <Typography
-            sx={{
-              color: "text.white_32",
-              textAlign: "center",
-            }}
-          >
-            Talk freely and our AI will fit the best headphones for you
           </Typography>
 
           {/* Input Box */}
