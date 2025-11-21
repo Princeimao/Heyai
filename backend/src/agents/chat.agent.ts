@@ -10,7 +10,6 @@ const chatAgent = createAgent({
   systemPrompt: systemPrompt,
 });
 
-// Todo: Optimise the database query by reducing the number of quries
 export const getResponse = async (
   content: string,
   userId: string,
@@ -21,7 +20,7 @@ export const getResponse = async (
       const execution = await prisma.execution.findFirst({
         where: {
           id: executionId,
-          userId: userId,
+          clerkId: userId,
         },
       });
 
@@ -108,7 +107,7 @@ export const getResponse = async (
       data: {
         title: content.slice(0, 10),
         type: "conversation",
-        userId: userId,
+        clerkId: userId,
         externalId: conversation.id,
       },
     });

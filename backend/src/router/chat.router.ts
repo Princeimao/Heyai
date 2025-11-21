@@ -1,3 +1,4 @@
+import { requireAuth } from "@clerk/express";
 import express from "express";
 import {
   continueConversation,
@@ -5,19 +6,18 @@ import {
   deleteConversation,
   getConversation,
 } from "../controller/chat.controller";
-import { authMiddleware } from "./../middleware/auth.middleware";
 
 const router = express.Router();
 
-router.route("/create/conversation").post(authMiddleware, createConversation);
+router.route("/create/conversation").post(requireAuth, createConversation);
 router
   .route("/conversation/:executionId")
-  .post(authMiddleware, continueConversation);
+  .post(requireAuth, continueConversation);
 router
   .route("/get/conversation/:executionId")
-  .get(authMiddleware, getConversation);
+  .get(requireAuth, getConversation);
 router
   .route("/delete/conversation/:executionId")
-  .delete(authMiddleware, deleteConversation);
+  .delete(requireAuth, deleteConversation);
 
 export default router;

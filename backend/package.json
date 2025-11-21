@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@clerk/express": "^1.7.51",
     "@langchain/core": "^1.0.2",
     "@langchain/google-genai": "^1.0.0",
     "@prisma/client": "^6.18.0",
@@ -24,6 +25,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^1.0.2",
+    "ngrok": "^5.0.0-beta.2",
     "nodemon": "^3.1.10",
     "prisma": "^6.18.0",
     "uuid": "^13.0.0",

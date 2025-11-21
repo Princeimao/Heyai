@@ -1,3 +1,4 @@
+import { getAuth } from "@clerk/express";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
 import { getResponse } from "../agents/chat.agent";
@@ -6,13 +7,17 @@ import { contentValidation } from "../validation/chat.validation";
 
 export const getConversation = async (req: Request, res: Response) => {
   try {
+    const { isAuthenticated, userId } = getAuth(req);
     const { executionId } = req.params;
-    const id = req.user?.id;
+
+    if (!isAuthenticated) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
 
     const execution = await prisma.execution.findFirst({
       where: {
         id: executionId,
-        userId: id,
+        clerkId: userId,
       },
     });
 
@@ -53,12 +58,16 @@ export const getConversation = async (req: Request, res: Response) => {
 export const deleteConversation = async (req: Request, res: Response) => {
   try {
     const { executionId } = req.params;
-    const userId = req.user?.id;
+    const { isAuthenticated, userId } = getAuth(req);
+
+    if (!isAuthenticated) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
 
     const execution = await prisma.execution.findFirst({
       where: {
         id: executionId,
-        userId: userId,
+        clerkId: userId,
       },
     });
 
@@ -98,14 +107,10 @@ export const deleteConversation = async (req: Request, res: Response) => {
 export const createConversation = async (req: Request, res: Response) => {
   try {
     const { content } = contentValidation.parse(req.body);
-    const userId = req.user?.id;
+    const { isAuthenticated, userId } = getAuth(req);
 
-    if (!userId) {
-      res.status(400).json({
-        success: false,
-        message: "Unauthorized Request",
-      });
-      return;
+    if (!isAuthenticated) {
+      return res.status(401).json({ error: "User not authenticated" });
     }
 
     const response = await getResponse(content, userId);
@@ -137,14 +142,10 @@ export const continueConversation = async (req: Request, res: Response) => {
   try {
     const { executionId } = req.params;
     const { content } = req.body;
-    const userId = req.user?.id;
+    const { isAuthenticated, userId } = getAuth(req);
 
-    if (!userId) {
-      res.status(400).json({
-        success: false,
-        message: "Unauthorized Request",
-      });
-      return;
+    if (!isAuthenticated) {
+      return res.status(401).json({ error: "User not authenticated" });
     }
 
     const response = await getResponse(content, userId, executionId);
