@@ -7,7 +7,7 @@ import MuiAppBar, {
 import { styled } from "@mui/material/styles";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Main from "../../public/main.svg";
+import Main from "../assets/main.svg";
 
 const drawerWidth = 240;
 

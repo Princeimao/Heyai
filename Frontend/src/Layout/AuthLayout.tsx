@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import Main from "../../public/main.svg";
-import Side from "../../public/side.svg";
+import Main from "../assets/main.svg";
+import Side from "../assets/side.svg";
 
 const AuthLayout = () => {
   return (

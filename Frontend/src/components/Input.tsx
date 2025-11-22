@@ -91,8 +91,8 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useEffect, useRef, useState } from "react";
-import aiLogo from "../../public/Ai.svg";
+import { useState } from "react";
+import aiLogo from "../assets/Ai.svg";
 
 const Root = styled(Box)(() => ({
   width: "100%",
@@ -137,66 +137,28 @@ const SuggestionsRow = styled(Box)(({ theme }) => ({
   flexWrap: "wrap",
 }));
 
-export default function GeminiAIInput({
-  onSend = (t) => console.log("send", t),
-  placeholder = "Ask me anything...",
-  suggestions = ["Summarize this", "Write a tweet", "Explain like I'm 5"],
-  loading = false,
-  maxRows = 4,
-}) {
-  const [text, setText] = useState("");
-  const [openSuggestions, setOpenSuggestions] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const inputRef = useRef(null);
-
-  useEffect(() => {
-    setOpenSuggestions(
-      text.trim() === "" && suggestions && suggestions.length > 0
-    );
-  }, [text, suggestions]);
-
-  const handleSend = () => {
-    const t = text.trim();
-    if (!t) return;
-    onSend(t);
-    setText("");
-    setOpenSuggestions(true);
-    inputRef.current?.focus();
-  };
-
-  const handleKeyDown = (e) => {
-    // Enter to send, Shift+Enter new line
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-  const handleSuggestionClick = (s) => {
-    // insert suggestion into input
-    setText((prev) => (prev ? prev + " " + s : s));
-    setOpenSuggestions(false);
-    inputRef.current?.focus();
-  };
+const suggestions = ["Summarize this", "Write a tweet", "Explain like I'm 5"];
+const InputBox = ({ loading = false }) => {
+  const [prompt, setPrompt] = useState<string>("");
 
   return (
     <Root>
-      <Container sx={{
-        width: 700cd 
-      }}>
+      <Container
+        sx={{
+          width: 700,
+        }}
+      >
         <InputRow>
           <Avatar sx={{ bgcolor: "transparent" }}>
             <img src={aiLogo} alt="ailogo" />
           </Avatar>
 
           <StyledInput
-            inputRef={inputRef}
-            placeholder={placeholder}
+            placeholder="Ask me anything..."
             multiline
-            maxRows={maxRows}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={handleKeyDown}
+            maxRows={4}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
           />
 
           <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
@@ -219,8 +181,8 @@ export default function GeminiAIInput({
               <span>
                 <IconButton
                   size="large"
-                  onClick={handleSend}
-                  disabled={text.trim() === "" || loading}
+                  // onClick={handleSend}
+                  disabled={prompt.trim() === "" || loading}
                   aria-label="send message"
                 >
                   {loading ? (
@@ -235,7 +197,7 @@ export default function GeminiAIInput({
         </InputRow>
 
         {/* Suggestions row (Gemini-style chips) */}
-        {openSuggestions && suggestions && suggestions.length > 0 && (
+        {suggestions && suggestions.length > 0 && (
           <SuggestionsRow
             sx={{
               px: 1,
@@ -245,7 +207,7 @@ export default function GeminiAIInput({
               <Chip
                 key={i}
                 label={s}
-                onClick={() => handleSuggestionClick(s)}
+                // onClick={() => handleSuggestionClick(s)}
                 clickable
                 size="small"
                 variant="outlined"
@@ -259,7 +221,6 @@ export default function GeminiAIInput({
           </SuggestionsRow>
         )}
 
-        {/* Small helper / shortcut text */}
         <Box
           sx={{
             display: "flex",
@@ -275,23 +236,6 @@ export default function GeminiAIInput({
       </Container>
     </Root>
   );
-}
+};
 
-// Usage example (in the same file for convenience):
-// import GeminiAIInput from './GeminiAIInput';
-//
-// function Demo() {
-//   const [loading, setLoading] = React.useState(false);
-//   const handleSend = async (text) => {
-//     setLoading(true);
-//     // simulate call to LLM
-//     await new Promise((r) => setTimeout(r, 1200));
-//     console.log('sent to LLM:', text);
-//     setLoading(false);
-//   };
-//   return (
-//     <div style={{ padding: 24 }}>
-//       <GeminiAIInput onSend={handleSend} loading={loading} />
-//     </div>
-//   );
-// }
+export default InputBox;

@@ -21,7 +21,7 @@ import {
 } from "@mui/material/styles";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Chat from "../../public/chat.svg";
+import Chat from "../assets/chat.svg";
 import type { Execution } from "../layout/HomeLayout";
 
 const drawerWidth = 240;
