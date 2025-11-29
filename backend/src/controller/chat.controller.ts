@@ -1,7 +1,7 @@
 import { getAuth } from "@clerk/express";
 import { Request, Response } from "express";
 import { ZodError } from "zod";
-import { getResponse } from "../agents/chat.agent";
+import { getResponse } from "../agents/agent";
 import { prisma } from "../config/prisma.client";
 import { contentValidation } from "../validation/chat.validation";
 

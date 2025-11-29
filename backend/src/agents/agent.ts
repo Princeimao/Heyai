@@ -1,5 +1,5 @@
 import { createAgent } from "langchain";
-import { systemPrompt } from "../../systemPrompt";
+import { chatAgentPrompt } from "../../systemPrompt";
 import { gemini } from "../config/gemini.config";
 import { prisma } from "../config/prisma.client";
 import {
@@ -8,11 +8,13 @@ import {
   transcribeYoutTubeVideo,
 } from "./tools";
 
+
+
 export const chatAgent = createAgent({
   name: "chat_Agent",
   model: gemini,
   tools: [],
-  systemPrompt: systemPrompt,
+  systemPrompt: chatAgentPrompt,
 });
 
 export const videoAgent = createAgent({

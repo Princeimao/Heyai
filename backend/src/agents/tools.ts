@@ -1,6 +1,9 @@
+
+import { END } from "@langchain/langgraph";
 import { tool } from "langchain";
 import { YoutubeTranscript } from "youtube-transcript";
 import { z } from "zod";
+import { members, supervisorAgentPrompt } from "../../systemPrompt";
 import { embeddings } from "../config/gemini.config";
 import { videoCollection } from "../db/chroma.connection";
 
@@ -37,7 +40,6 @@ export const transcribeYoutTubeVideo = tool(
 );
 
 // Right now my application can able to handle one video during chat for handling more video save the id into the prisma and also put metadata as the video url
-
 export const createVideoEmbeddings = tool(
   async ({ text, conversationId }) => {
     const embedding = await embeddings.embedDocuments([text]);
@@ -78,3 +80,12 @@ export const getVectorEmbeddings = tool(
     }),
   }
 );
+
+export const routingTool = {
+  name: "routing",
+  description: "Select the next role.",
+  schema: z.object({
+    next: z.enum([END, ...members]),
+  }),
+};
+
