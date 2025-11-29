@@ -2,7 +2,11 @@ import { createAgent } from "langchain";
 import { systemPrompt } from "../../systemPrompt";
 import { gemini } from "../config/gemini.config";
 import { prisma } from "../config/prisma.client";
-import { transcribeYoutTubeVideo } from "./tools";
+import {
+  createVideoEmbeddings,
+  getVectorEmbeddings,
+  transcribeYoutTubeVideo,
+} from "./tools";
 
 export const chatAgent = createAgent({
   name: "chat_Agent",
@@ -14,7 +18,7 @@ export const chatAgent = createAgent({
 export const videoAgent = createAgent({
   name: "video_Agent",
   model: gemini,
-  tools: [transcribeYoutTubeVideo],
+  tools: [transcribeYoutTubeVideo, createVideoEmbeddings, getVectorEmbeddings],
   systemPrompt: "videoSystemtPrompt",
 });
 

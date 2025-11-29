@@ -58,3 +58,23 @@ export const createVideoEmbeddings = tool(
     }),
   }
 );
+
+export const getVectorEmbeddings = tool(
+  async ({ conversationId, query }) => {
+    const embeddings = (await videoCollection).query({
+      ids: [conversationId],
+      queryTexts: [query],
+      nResults: 8,
+    });
+
+    return JSON.stringify(embeddings);
+  },
+  {
+    name: "search_vector_db",
+    description: "search embedding in video collection vector database",
+    schema: z.object({
+      conversationId: z.string(),
+      query: z.string(),
+    }),
+  }
+);
